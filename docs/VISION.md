@@ -1,5 +1,4 @@
 # The World I'd Build You
-
 > A vision document
 
 ## The work
