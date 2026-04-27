@@ -3,9 +3,6 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import type { PageServerLoad } from './$types.js';
 import type { Shard, Database } from '$lib/types.js';
 
-// Prerendered at build time — redeploy after adding new shards to the database
-export const prerender = true;
-
 export const load: PageServerLoad = async () => {
 	const client = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
 

@@ -7,7 +7,7 @@ description: MVP roadmap for The World I'd Build You — a wordless drifting fie
 |           | Status                              | Next Up                              | Blocked                          |
 | --------- | ----------------------------------- | ------------------------------------ | -------------------------------- |
 | **Data**  | Schema + storage migrations applied | Seed considered shards (Redwall set) | —                                |
-| **Rend**  | Still-image + paginated-text built  | End-to-end verification              | —                                |
+| **Rend**  | E2e render verified                 | Renderer registry contract test      | —                                |
 | **Field** | Drift / density / parallax / sky    | Tune density logic, profile motion   | —                                |
 | **Open**  | OpenedShard component scaffolded    | Click-outside, escape, blurred drift | Backdrop-filter perf budget      |
 | **Input** | Pointer + touch-attention modules   | Real touch-grammar design pass       | Touch grammar decisions          |
@@ -46,7 +46,7 @@ _None._
 
 - [ ] 1DA.3. Seed initial considered shards (Redwall + small companion set) — **depends on 1DA.1**
 - [ ] 1DA.4. Storage upload workflow notes (which bucket, naming, alt-text discipline) — **depends on 1DA.2**
-- [ ] 1RE.3. End-to-end render verification: fetch shard → surface → open → interior → paginate
+- [x] 1RE.3. End-to-end render verification: fetch shard → surface → open → interior → paginate
 - [ ] 1RE.4. Renderer registry contract test (unknown surface/interior types fail gracefully) — **depends on 1RE.1, 1RE.2**
 
 <a name="m1-blocked"><h4>Blocked (Milestone 1)</h4></a>
@@ -223,7 +223,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 1DA.4["`*1DA.4*<br/>**Data**<br/>upload workflow notes`"]:::open
 1RE.1["`*1RE.1*<br/>**Rend**<br/>still-image surface`"]:::done
 1RE.2["`*1RE.2*<br/>**Rend**<br/>paginated-text interior`"]:::done
-1RE.3["`*1RE.3*<br/>**Rend**<br/>e2e render verify`"]:::open
+1RE.3["`*1RE.3*<br/>**Rend**<br/>e2e render verify`"]:::done
 1RE.4["`*1RE.4*<br/>**Rend**<br/>registry contract test`"]:::open
 1RE.5["`*1RE.5*<br/>**Rend**<br/>registries module`"]:::done
 1RE.6["`*1RE.6*<br/>**Rend**<br/>core types`"]:::done
