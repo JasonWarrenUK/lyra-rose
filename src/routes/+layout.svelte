@@ -1,6 +1,6 @@
 <script lang="ts">
-	import '../app.css';
-	import type { Snippet } from 'svelte';
+	import "../app.css";
+	import type { Snippet } from "svelte";
 
 	interface Props {
 		children: Snippet;
@@ -11,9 +11,9 @@
 
 <svelte:head>
 	<title>The World I'd Build You</title>
-	<meta name="description" content="A drifting field of shards. A world for someone." />
+	<meta name="description" content="Promise • Regret" />
 	<meta property="og:title" content="The World I'd Build You" />
-	<meta property="og:description" content="A drifting field of shards. A world for someone." />
+	<meta property="og:description" content="Promise • Regret" />
 	<meta property="og:type" content="website" />
 	<meta property="og:image" content="/og-card.jpg" />
 	<meta name="robots" content="index, follow" />
