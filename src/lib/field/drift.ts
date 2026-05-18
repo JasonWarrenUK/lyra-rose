@@ -27,8 +27,9 @@ export function drift(
 	const vxBase = params.fieldShard.vx;
 	const vyBase = params.fieldShard.vy;
 
-	// Set initial position immediately so element doesn't flash at 0,0
-	gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+	// Use transform-based positioning so GSAP composites on the GPU layer,
+	// avoiding layout recalculations that left/top positioning would cause.
+	gsap.set(node, { xPercent: -50, yPercent: -50, x: `${x}vw`, y: `${y}vh` });
 
 	let lastTime = gsap.ticker.time;
 
@@ -44,11 +45,10 @@ export function drift(
 
 		if (state.paused || dt > 0.5) return; // skip large gaps (tab hidden, etc.)
 
-		const speedFactor = 1; // slowdown is handled by CSS scale, not velocity
-		x += vxBase * speedFactor * dt;
-		y += vyBase * speedFactor * dt;
+		x += vxBase * dt;
+		y += vyBase * dt;
 
-		gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+		gsap.set(node, { x: `${x}vw`, y: `${y}vh` });
 
 		// Off-screen: >15 units outside viewport boundary
 		if (x < -15 || x > 115 || y < -15 || y > 115) {
