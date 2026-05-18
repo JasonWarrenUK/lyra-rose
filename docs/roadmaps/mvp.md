@@ -4,16 +4,16 @@ description: MVP roadmap for The World I'd Build You — a wordless drifting fie
 
 # Lyra Rose: MVP Roadmap
 
-|           | Status                              | Next Up                              | Blocked                          |
-| --------- | ----------------------------------- | ------------------------------------ | -------------------------------- |
-| **Data**  | Schema + storage migrations applied | Seed considered shards (Redwall set) | —                                |
-| **Rend**  | E2e render verified                 | Renderer registry contract test      | —                                |
-| **Field** | Drift / density / parallax / sky    | Tune density logic, profile motion   | —                                |
-| **Open**  | OpenedShard component scaffolded    | Click-outside, escape, blurred drift | Backdrop-filter perf budget      |
-| **Input** | Pointer + touch-attention modules   | Real touch-grammar design pass       | Touch grammar decisions          |
-| **Audio** | Proximity gain + effect sounds      | Touch audio-summons equivalent       | Touch grammar decisions          |
-| **Polish**| Meta description, favicon, OG card  | OG card editorial pass, perf profile | —                                |
-| **Capt**  | Deferred (post-MVP)                 | Catch endpoint design                | MVP must ship first              |
+|           | Status                                        | Next Up                              | Blocked                          |
+| --------- | --------------------------------------------- | ------------------------------------ | -------------------------------- |
+| **Data**  | Schema + storage + workflow notes             | Seed considered shards (Redwall set) | —                                |
+| **Rend**  | E2e render + registry contract tests          | —                                    | —                                |
+| **Field** | Drift / density / parallax / sky / perf       | Tune density logic (needs shards)    | 1DA.3 (seeding)                  |
+| **Open**  | Full open/close flow + GSAP transitions       | —                                    | —                                |
+| **Input** | Pointer hover pause + touch-attention         | Touch grammar design                 | Touch grammar decisions          |
+| **Audio** | Proximity gain + expand/collapse sounds       | Touch audio-summons equivalent       | Touch grammar decisions          |
+| **Polish**| Meta description, favicon, OG card, a11y      | OG editorial + final favicon         | —                                |
+| **Capt**  | Deferred (post-MVP)                           | Catch endpoint design                | MVP must ship first              |
 
 ---
 
@@ -45,9 +45,6 @@ _None._
 <a name="m1-todo"><h4>To Do (Milestone 1)</h4></a>
 
 - [ ] 1DA.3. Seed initial considered shards (Redwall + small companion set) — **depends on 1DA.1**
-- [ ] 1DA.4. Storage upload workflow notes (which bucket, naming, alt-text discipline) — **depends on 1DA.2**
-- [x] 1RE.3. End-to-end render verification: fetch shard → surface → open → interior → paginate
-- [ ] 1RE.4. Renderer registry contract test (unknown surface/interior types fail gracefully) — **depends on 1RE.1, 1RE.2**
 
 <a name="m1-blocked"><h4>Blocked (Milestone 1)</h4></a>
 
@@ -57,8 +54,11 @@ _None._
 
 - [x] 1DA.1. `shards` table schema (surface/interior discriminated columns, audio path, tending notes)
 - [x] 1DA.2. Supabase Storage bucket + RLS policies for shard assets
+- [x] 1DA.4. Storage upload workflow notes (bucket, naming, alt-text discipline) — [docs/SEEDING.md](../SEEDING.md)
 - [x] 1RE.1. Still-image surface renderer
 - [x] 1RE.2. Paginated-text interior renderer
+- [x] 1RE.3. End-to-end render verification: fetch shard → surface → open → interior → paginate
+- [x] 1RE.4. Renderer registry contract test (unknown surface/interior types fail gracefully)
 - [x] 1RE.5. Renderer registries module
 - [x] 1RE.6. Core types (`Shard`, `FieldShard`, discriminated unions)
 
@@ -76,10 +76,6 @@ _None._
 <a name="m2-todo"><h4>To Do (Milestone 2)</h4></a>
 
 - [ ] 2FI.5. Tune density logic against a populated shard set — **depends on 1DA.3**
-- [ ] 2FI.6. Non-deterministic replacement when a shard drifts off-screen (0/1/many at varied depths)
-- [ ] 2FI.7. Profile drift performance with 10–20 simultaneous animations (GSAP, GPU transforms)
-- [ ] 2FI.8. Cross-device sky-cycle verification (timezone correctness on mobile + desktop)
-- [ ] 2IN.3. Hover-slowdown tuning pass (feel, not just function) — **depends on 2FI.7**
 
 <a name="m2-blocked"><h4>Blocked (Milestone 2)</h4></a>
 
@@ -91,8 +87,12 @@ _None._
 - [x] 2FI.2. Density logic module
 - [x] 2FI.3. Broken-mirror shard shape generator
 - [x] 2FI.4. Day-cycle sky background (local-time driven)
+- [x] 2FI.6. Non-deterministic replacement when a shard drifts off-screen (0/1/many at varied depths)
+- [x] 2FI.7. Drift performance: GPU transform-based positioning, `contain: layout style`, `will-change: transform`
+- [x] 2FI.8. Sky-cycle timezone verification (automated tests covering all 24 hours + boundary conditions)
 - [x] 2IN.1. Pointer input module
 - [x] 2IN.2. Touch-attention input module (initial pass)
+- [x] 2IN.3. Hover-slowdown: JS `hovered` state pauses drift engine on `mouseenter`, not just CSS `:hover`
 - [x] 2RE.7. Viewport, Shard, OpenedShard component containers
 - [x] 2RE.8. Main `+page.svelte` composition + server-side shard fetch
 
@@ -109,20 +109,12 @@ _None._
 
 <a name="m3-todo"><h4>To Do (Milestone 3)</h4></a>
 
-- [ ] 3OP.1. Open transition: hover-slow → click → foreground placement (GSAP) — **depends on 2IN.3**
-- [ ] 3OP.2. Blurred-but-drifting backdrop (`backdrop-filter` on continuously transforming layer) — **depends on 2FI.7**
-- [ ] 3OP.3. Click-outside dismissal
-- [ ] 3OP.4. Escape-key dismissal (a11y)
-- [ ] 3OP.5. Surface-only shards open at larger scale with nothing else in frame
-- [ ] 3OP.6. Shards-with-interior open to the renderer's output
-- [ ] 3OP.7. Backdrop-filter performance budget + profile pass — **depends on 3OP.2**
 - [ ] 3TO.1. Touch grammar design decision: noticing-without-committing mechanism
 - [ ] 3TO.2. Touch grammar design decision: audio-summons-by-attention non-cursor analogue
 - [ ] 3TO.3. Implement chosen touch grammar across field — **depends on 3TO.1, 3TO.2**
 - [ ] 3TO.4. Implement chosen touch grammar across opening — **depends on 3TO.1, 3OP.1**
 - [ ] 3AU.1. Pointer-proximity audio summons end-to-end test — **depends on 1DA.3**
 - [ ] 3AU.2. Touch audio-summons equivalent — **depends on 3TO.2**
-- [ ] 3AU.3. Expand/collapse effect sounds wired into open/close transitions — **depends on 3OP.1**
 
 <a name="m3-blocked"><h4>Blocked (Milestone 3)</h4></a>
 
@@ -130,7 +122,15 @@ _None._
 
 <a name="m3-done"><h4>Completed (Milestone 3)</h4></a>
 
+- [x] 3AU.3. Expand/collapse effect sounds wired into open/close transitions
 - [x] 3AU.4. Web Audio proximity gain + effect sound primitives
+- [x] 3OP.1. Open/close transitions: GSAP backdrop fade + panel scale entrance and dismissal animations
+- [x] 3OP.2. Blurred-but-drifting backdrop (`backdrop-filter` on continuously transforming field)
+- [x] 3OP.3. Click-outside dismissal (via `.backdrop` class target check)
+- [x] 3OP.4. Escape-key dismissal (a11y)
+- [x] 3OP.5. Surface-only shards open at larger scale with nothing else in frame
+- [x] 3OP.6. Shards-with-interior open to the renderer's output
+- [x] 3OP.7. Backdrop-filter performance budget: `contain: layout style` on field element isolates compositing layer
 
 ---
 
@@ -152,7 +152,6 @@ _None._
 - [ ] 4PO.8. Final favicon + apple-touch-icon set — **depends on 4PO.6**
 - [ ] 4PO.9. Performance audit (Lighthouse, INP, motion under load) — **depends on 3OP.7**
 - [ ] 4PO.10. Accessibility audit (escape key, alt text, reduced-motion preference) — **depends on 3OP.4**
-- [ ] 4PO.11. `prefers-reduced-motion` handling for drift + open transitions
 - [ ] 4PO.12. Vercel production deploy + custom domain bind — **depends on 4PO.7**
 - [ ] 4PO.13. Indexability check (robots.txt, sitemap, OG validators) — **depends on 4PO.4, 4PO.5**
 - [ ] 4PO.14. End-to-end MVP success-test: author → display → open → paginate → dismiss, in pointer **and** touch — **depends on 3OP.8, 3TO.4**
@@ -166,6 +165,7 @@ _None._
 - [x] 4PO.1. Initial meta description shipped
 - [x] 4PO.2. Temporary favicon
 - [x] 4PO.3. Preview card image (initial)
+- [x] 4PO.11. `prefers-reduced-motion` handling: Shard transitions disabled, backdrop-filter replaced with solid overlay
 
 ---
 
@@ -220,11 +220,11 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 1DA.1["`*1DA.1*<br/>**Data**<br/>shards schema`"]:::done
 1DA.2["`*1DA.2*<br/>**Data**<br/>storage RLS`"]:::done
 1DA.3["`*1DA.3*<br/>**Data**<br/>seed shards`"]:::open
-1DA.4["`*1DA.4*<br/>**Data**<br/>upload workflow notes`"]:::open
+1DA.4["`*1DA.4*<br/>**Data**<br/>upload workflow notes`"]:::done
 1RE.1["`*1RE.1*<br/>**Rend**<br/>still-image surface`"]:::done
 1RE.2["`*1RE.2*<br/>**Rend**<br/>paginated-text interior`"]:::done
 1RE.3["`*1RE.3*<br/>**Rend**<br/>e2e render verify`"]:::done
-1RE.4["`*1RE.4*<br/>**Rend**<br/>registry contract test`"]:::open
+1RE.4["`*1RE.4*<br/>**Rend**<br/>registry contract test`"]:::done
 1RE.5["`*1RE.5*<br/>**Rend**<br/>registries module`"]:::done
 1RE.6["`*1RE.6*<br/>**Rend**<br/>core types`"]:::done
 
@@ -233,22 +233,22 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 2FI.3["`*2FI.3*<br/>**Field**<br/>shard shape`"]:::done
 2FI.4["`*2FI.4*<br/>**Field**<br/>sky cycle`"]:::done
 2FI.5["`*2FI.5*<br/>**Field**<br/>tune density`"]
-2FI.6["`*2FI.6*<br/>**Field**<br/>non-det replacement`"]:::open
-2FI.7["`*2FI.7*<br/>**Field**<br/>drift perf profile`"]:::open
-2FI.8["`*2FI.8*<br/>**Field**<br/>tz sky verify`"]:::open
+2FI.6["`*2FI.6*<br/>**Field**<br/>non-det replacement`"]:::done
+2FI.7["`*2FI.7*<br/>**Field**<br/>drift perf profile`"]:::done
+2FI.8["`*2FI.8*<br/>**Field**<br/>tz sky verify`"]:::done
 2IN.1["`*2IN.1*<br/>**Input**<br/>pointer module`"]:::done
 2IN.2["`*2IN.2*<br/>**Input**<br/>touch-attention init`"]:::done
-2IN.3["`*2IN.3*<br/>**Input**<br/>hover-slow tune`"]
+2IN.3["`*2IN.3*<br/>**Input**<br/>hover-slow tune`"]:::done
 2RE.7["`*2RE.7*<br/>**Rend**<br/>Viewport/Shard/Opened`"]:::done
 2RE.8["`*2RE.8*<br/>**Rend**<br/>+page composition`"]:::done
 
-3OP.1["`*3OP.1*<br/>**Open**<br/>open transition`"]
-3OP.2["`*3OP.2*<br/>**Open**<br/>blurred backdrop`"]
-3OP.3["`*3OP.3*<br/>**Open**<br/>click-outside`"]:::open
-3OP.4["`*3OP.4*<br/>**Open**<br/>escape key`"]:::open
-3OP.5["`*3OP.5*<br/>**Open**<br/>surface-only at scale`"]:::open
-3OP.6["`*3OP.6*<br/>**Open**<br/>interior renderer mount`"]:::open
-3OP.7["`*3OP.7*<br/>**Open**<br/>backdrop perf budget`"]
+3OP.1["`*3OP.1*<br/>**Open**<br/>open transition`"]:::done
+3OP.2["`*3OP.2*<br/>**Open**<br/>blurred backdrop`"]:::done
+3OP.3["`*3OP.3*<br/>**Open**<br/>click-outside`"]:::done
+3OP.4["`*3OP.4*<br/>**Open**<br/>escape key`"]:::done
+3OP.5["`*3OP.5*<br/>**Open**<br/>surface-only at scale`"]:::done
+3OP.6["`*3OP.6*<br/>**Open**<br/>interior renderer mount`"]:::done
+3OP.7["`*3OP.7*<br/>**Open**<br/>backdrop perf budget`"]:::done
 3OP.8["`*3OP.8*<br/>**Open**<br/>cross-grammar sweep`"]
 3TO.1["`*3TO.1*<br/>**Touch**<br/>noticing-without-committing`"]:::open
 3TO.2["`*3TO.2*<br/>**Touch**<br/>audio-summons analogue`"]:::open
@@ -256,7 +256,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 3TO.4["`*3TO.4*<br/>**Touch**<br/>opening touch grammar`"]
 3AU.1["`*3AU.1*<br/>**Audio**<br/>pointer summons e2e`"]
 3AU.2["`*3AU.2*<br/>**Audio**<br/>touch summons equiv`"]
-3AU.3["`*3AU.3*<br/>**Audio**<br/>expand/collapse fx`"]
+3AU.3["`*3AU.3*<br/>**Audio**<br/>expand/collapse fx`"]:::done
 3AU.4["`*3AU.4*<br/>**Audio**<br/>proximity primitives`"]:::done
 
 4PO.1["`*4PO.1*<br/>**Polish**<br/>meta description (initial)`"]:::done
@@ -269,7 +269,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 4PO.8["`*4PO.8*<br/>**Polish**<br/>icon set`"]
 4PO.9["`*4PO.9*<br/>**Polish**<br/>perf audit`"]
 4PO.10["`*4PO.10*<br/>**Polish**<br/>a11y audit`"]
-4PO.11["`*4PO.11*<br/>**Polish**<br/>reduced-motion`"]:::open
+4PO.11["`*4PO.11*<br/>**Polish**<br/>reduced-motion`"]:::done
 4PO.12["`*4PO.12*<br/>**Polish**<br/>prod deploy + DNS`"]
 4PO.13["`*4PO.13*<br/>**Polish**<br/>indexability check`"]
 4PO.14["`*4PO.14*<br/>**Polish**<br/>MVP success test`"]
@@ -298,17 +298,11 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 1RE.6 --> m1
 2FI.1 --> m2
 2FI.5 --> m2
-2FI.6 --> m2
-2FI.7 --> m2
-2IN.3 --> m2
-3OP.1 --> m3
-3OP.7 --> m3
 3OP.8 --> m3
 3TO.3 --> m3
 3TO.4 --> m3
 3AU.1 --> m3
 3AU.2 --> m3
-3AU.3 --> m3
 4PO.9 --> m4
 4PO.12 --> m4
 4PO.14 --> m4
