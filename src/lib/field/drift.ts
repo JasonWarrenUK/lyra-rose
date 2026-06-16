@@ -2,6 +2,13 @@ import { gsap } from 'gsap';
 import type { FieldShard, Shard } from '$lib/types.js';
 import { replacementCount, spawnShard } from './density.js';
 
+/** How a shard's drift position is written to the DOM each frame. */
+export type PositionMode =
+	/** GPU-composited transform: translate3d — no per-frame layout (production default). */
+	| 'transform'
+	/** Legacy left/top offsets — triggers layout + paint each frame (kept for A/B profiling). */
+	| 'offset';
+
 /**
  * Svelte action: drives GSAP-ticked drift for a single shard element.
  * Wraps everything in gsap.context() so ctx.revert() cleans up completely.
@@ -17,6 +24,7 @@ export function drift(
 		paused?: boolean;
 		excludeIds?: Set<string>;
 		fieldSize?: number;
+		positionMode?: PositionMode;
 	}
 ): { update: (p: typeof params) => void; destroy: () => void } {
 	let state = { ...params };
@@ -27,8 +35,23 @@ export function drift(
 	const vxBase = params.fieldShard.vx;
 	const vyBase = params.fieldShard.vy;
 
+	// Write the current (x, y) — held in vw/vh — to the element. In 'transform'
+	// mode we convert to px and use a composited translate3d (no layout); in
+	// 'offset' mode we set left/top directly (the legacy, layout-bound path).
+	function applyPosition() {
+		if ((state.positionMode ?? 'transform') === 'transform') {
+			gsap.set(node, {
+				x: (x / 100) * window.innerWidth,
+				y: (y / 100) * window.innerHeight,
+				force3D: true,
+			});
+		} else {
+			gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+		}
+	}
+
 	// Set initial position immediately so element doesn't flash at 0,0
-	gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+	applyPosition();
 
 	let lastTime = gsap.ticker.time;
 
@@ -48,7 +71,7 @@ export function drift(
 		x += vxBase * speedFactor * dt;
 		y += vyBase * speedFactor * dt;
 
-		gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+		applyPosition();
 
 		// Off-screen: >15 units outside viewport boundary
 		if (x < -15 || x > 115 || y < -15 || y > 115) {

@@ -8,7 +8,7 @@ description: MVP roadmap for The World I'd Build You — a wordless drifting fie
 | --------- | ----------------------------------- | ------------------------------------ | -------------------------------- |
 | **Data**  | Schema + storage migrations applied | Seed considered shards (Redwall set) | —                                |
 | **Rend**  | E2e render verified                 | Renderer registry contract test      | —                                |
-| **Field** | Drift / density / parallax / sky    | Tune density logic, profile motion   | —                                |
+| **Field** | Drift / density / parallax / sky    | Tune density, hover-slow feel (2IN.3)| —                                |
 | **Open**  | OpenedShard component scaffolded    | Click-outside, escape, blurred drift | Backdrop-filter perf budget      |
 | **Input** | Pointer + touch-attention modules   | Real touch-grammar design pass       | Touch grammar decisions          |
 | **Audio** | Proximity gain + effect sounds      | Touch audio-summons equivalent       | Touch grammar decisions          |
@@ -77,7 +77,6 @@ _None._
 
 - [ ] 2FI.5. Tune density logic against a populated shard set — **depends on 1DA.3**
 - [ ] 2FI.6. Non-deterministic replacement when a shard drifts off-screen (0/1/many at varied depths)
-- [ ] 2FI.7. Profile drift performance with 10–20 simultaneous animations (GSAP, GPU transforms)
 - [ ] 2FI.8. Cross-device sky-cycle verification (timezone correctness on mobile + desktop)
 - [ ] 2IN.3. Hover-slowdown tuning pass (feel, not just function) — **depends on 2FI.7**
 
@@ -91,6 +90,7 @@ _None._
 - [x] 2FI.2. Density logic module
 - [x] 2FI.3. Broken-mirror shard shape generator
 - [x] 2FI.4. Day-cycle sky background (local-time driven)
+- [x] 2FI.7. Drift performance profiled at 10–30 shards; drift switched to GPU `transform` motion (dev harness at `/dev/perf`)
 - [x] 2IN.1. Pointer input module
 - [x] 2IN.2. Touch-attention input module (initial pass)
 - [x] 2RE.7. Viewport, Shard, OpenedShard component containers
@@ -234,7 +234,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 2FI.4["`*2FI.4*<br/>**Field**<br/>sky cycle`"]:::done
 2FI.5["`*2FI.5*<br/>**Field**<br/>tune density`"]
 2FI.6["`*2FI.6*<br/>**Field**<br/>non-det replacement`"]:::open
-2FI.7["`*2FI.7*<br/>**Field**<br/>drift perf profile`"]:::open
+2FI.7["`*2FI.7*<br/>**Field**<br/>drift perf profile`"]:::done
 2FI.8["`*2FI.8*<br/>**Field**<br/>tz sky verify`"]:::open
 2IN.1["`*2IN.1*<br/>**Input**<br/>pointer module`"]:::done
 2IN.2["`*2IN.2*<br/>**Input**<br/>touch-attention init`"]:::done
