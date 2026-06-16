@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types.js';
 	import type { FieldShard, Shard as ShardType } from '$lib/types.js';
 	import type { PositionMode } from '$lib/field/drift.js';
 	import Viewport from '$lib/components/Viewport.svelte';
@@ -11,14 +10,9 @@
 	import { generateClipPath } from '$lib/field/shape.js';
 	import { nanoid } from '$lib/nanoid.js';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
-
-	// Use the seeded pool when available; otherwise synthesise a placeholder shard
-	// so the harness profiles drift with no database dependency.
+	// Self-contained harness: synthesise a placeholder shard so drift can be
+	// profiled with no database dependency. Drift cost (the thing 2FI.7 measures)
+	// is content-agnostic, so a single repeated placeholder is representative.
 	const placeholder: ShardType = {
 		id: 'perf-placeholder',
 		created_at: new Date().toISOString(),
@@ -29,7 +23,7 @@
 		interior_type: null,
 		interior_data: null,
 	};
-	const pool = $derived(data.shards.length > 0 ? data.shards : [placeholder]);
+	const pool: ShardType[] = [placeholder];
 
 	let shardCount = $state(15);
 	let mode = $state<PositionMode>('transform');
