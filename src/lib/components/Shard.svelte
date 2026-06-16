@@ -26,6 +26,7 @@
 	const sizeVw = $derived((34 - (fieldShard.depth - 0.3) / 0.7 * 20).toFixed(2));
 
 	let el = $state<HTMLElement | null>(null);
+	let hovered = $state(false);
 	let slowed = $state(false);
 	let shardAudio: ShardAudio | null = null;
 
@@ -43,6 +44,15 @@
 		const gain = gainFromDistance(cursorX, cursorY, el);
 		shardAudio.setGain(gain);
 	});
+
+	function handleMouseEnter() {
+		if (getPointerKind() === 'touch') return;
+		hovered = true;
+	}
+
+	function handleMouseLeave() {
+		hovered = false;
+	}
 
 	function handleClick(event: MouseEvent) {
 		if (getPointerKind() === 'touch') return;
@@ -78,7 +88,7 @@
 	<div
 		class="shard-drift"
 		style="z-index: {Math.round((1.3 - fieldShard.depth) * 10)};"
-		use:drift={{ fieldShard, allShards, onReplace: onreplace, paused: paused || slowed, excludeIds, fieldSize, positionMode }}
+		use:drift={{ fieldShard, allShards, onReplace: onreplace, paused: paused || slowed || hovered, excludeIds, fieldSize, positionMode }}
 	>
 		<!-- Inner layer: size, shape, interaction. CSS owns the centring + hover-scale
 		     transform here so it never collides with the drift transform above. -->
@@ -100,6 +110,8 @@
 			onclick={handleClick}
 			ontouchend={handleTap}
 			onkeydown={handleKeydown}
+			onmouseenter={handleMouseEnter}
+			onmouseleave={handleMouseLeave}
 			use:touchAttention={{ onAttentive, onInattentive }}
 		>
 			<SurfaceRenderer data={fieldShard.shard.surface_data} />
@@ -120,20 +132,25 @@
 
 	.shard {
 		position: absolute;
-		transform: translate(-50%, -50%);
+		top: 0;
+		left: 0;
 		/* No border-radius — the polygon handles shaping */
 		overflow: hidden;
 		cursor: pointer;
+		/* Drift transform lives on .shard-drift; this layer's transform is
+		   reserved for the CSS hover/slowed scale. contain isolates it from the
+		   field's layout/style so a scale change here can't ripple outward. */
 		will-change: transform;
+		contain: layout style;
 		clip-path: var(--clip);
 		/* drop-shadow follows the clip-path; box-shadow would ignore it */
 		filter: drop-shadow(0 calc(var(--depth, 0.5) * 6px) calc(var(--depth, 0.5) * 18px) rgba(0, 0, 0, calc(var(--depth, 0.5) * 0.5)));
-		transition: filter 0.2s, transform 0.3s, clip-path 0.4s ease-out;
+		transition: filter 0.2s, scale 0.3s, clip-path 0.4s ease-out;
 	}
 
 	.shard:hover,
 	.shard.slowed {
-		transform: translate(-50%, -50%) scale(1.05);
+		scale: 1.05;
 		filter: drop-shadow(0 calc(var(--depth, 0.5) * 10px) calc(var(--depth, 0.5) * 26px) rgba(0, 0, 0, calc(var(--depth, 0.5) * 0.6)));
 	}
 

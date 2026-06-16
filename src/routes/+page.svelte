@@ -110,5 +110,9 @@
 		width: 100%;
 		height: 100%;
 		position: relative;
+		/* Isolate the field's paint/layout from the backdrop-filter overlay above it.
+		   Without this, backdrop-filter on a sibling forces compositing of the entire
+		   viewport on every tick — contain:layout+style limits that to this subtree. */
+		contain: layout style;
 	}
 </style>

@@ -67,9 +67,8 @@ export function drift(
 
 		if (state.paused || dt > 0.5) return; // skip large gaps (tab hidden, etc.)
 
-		const speedFactor = 1; // slowdown is handled by CSS scale, not velocity
-		x += vxBase * speedFactor * dt;
-		y += vyBase * speedFactor * dt;
+		x += vxBase * dt;
+		y += vyBase * dt;
 
 		applyPosition();
 
