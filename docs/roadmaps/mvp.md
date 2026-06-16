@@ -90,7 +90,7 @@ _None._
 - [x] 2FI.2. Density logic module
 - [x] 2FI.3. Broken-mirror shard shape generator
 - [x] 2FI.4. Day-cycle sky background (local-time driven)
-- [x] 2FI.7. Drift performance profiled at 10–30 shards; drift switched to GPU `transform` motion (dev harness at `/dev/perf`)
+- [x] 2FI.7. Drift performance profiled at up to 30 shards on 60Hz devices — no jank in either mode; drift switched to GPU `transform` motion as the cheaper default (dev harness at `/dev/perf`; see [DRIFT-PERF.md](../DRIFT-PERF.md))
 - [x] 2IN.1. Pointer input module
 - [x] 2IN.2. Touch-attention input module (initial pass)
 - [x] 2RE.7. Viewport, Shard, OpenedShard component containers
@@ -374,6 +374,7 @@ classDef mile fill:#c4fffe;
 - [Vision](../VISION.md)
 - [Tech Stack](../TECH-STACK.md)
 - [Deferred Features and Decisions](../DEFERRED.md)
+- [Drift Performance (2FI.7 findings)](../DRIFT-PERF.md)
 
 ---
 
