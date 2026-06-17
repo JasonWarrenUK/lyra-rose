@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { gsap } from 'gsap';
+	import { onMount } from 'svelte';
 	import type { FieldShard } from '$lib/types.js';
 	import { surfaceRenderers, interiorRenderers } from '$lib/registries.js';
 
@@ -23,11 +24,10 @@
 	const reducedMotion =
 		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	$effect(() => {
+	onMount(() => {
 		if (!backdropEl || !panelEl) return;
 
 		if (reducedMotion) {
-			// No animation — just appear
 			gsap.set(backdropEl, { opacity: 1 });
 			gsap.set(panelEl, { opacity: 1, scale: 1, y: 0 });
 			return;
