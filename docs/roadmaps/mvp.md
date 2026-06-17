@@ -6,9 +6,9 @@ description: MVP roadmap for The World I'd Build You — a wordless drifting fie
 
 |           | Status                                        | Next Up                              | Blocked                          |
 | --------- | --------------------------------------------- | ------------------------------------ | -------------------------------- |
-| **Data**  | Schema + storage + workflow notes             | Seed considered shards (Redwall set) | —                                |
+| **Data**  | Schema + storage + workflow notes + seed set  | —                                    | —                                |
 | **Rend**  | E2e render + registry contract tests          | —                                    | —                                |
-| **Field** | Drift / density / parallax / sky / perf       | Tune density logic (needs shards)    | 1DA.3 (seeding)                  |
+| **Field** | Drift / density / parallax / sky / perf       | —                                    | —                                |
 | **Open**  | Full open/close flow + GSAP transitions       | —                                    | —                                |
 | **Input** | Pointer hover pause + touch-attention         | Touch grammar design                 | Touch grammar decisions          |
 | **Audio** | Proximity gain + expand/collapse sounds       | Touch audio-summons equivalent       | Touch grammar decisions          |
@@ -44,7 +44,7 @@ _None._
 
 <a name="m1-todo"><h4>To Do (Milestone 1)</h4></a>
 
-- [ ] 1DA.3. Seed initial considered shards (Redwall + small companion set) — **depends on 1DA.1**
+_None._
 
 <a name="m1-blocked"><h4>Blocked (Milestone 1)</h4></a>
 
@@ -54,6 +54,7 @@ _None._
 
 - [x] 1DA.1. `shards` table schema (surface/interior discriminated columns, audio path, tending notes)
 - [x] 1DA.2. Supabase Storage bucket + RLS policies for shard assets
+- [x] 1DA.3. Seed initial considered shards (Redwall + small companion set) — 6 shards seeded (3 existing + 3 new: barn owl, DIY board game, New Forest)
 - [x] 1DA.4. Storage upload workflow notes (bucket, naming, alt-text discipline) — [docs/SEEDING.md](../SEEDING.md)
 - [x] 1RE.1. Still-image surface renderer
 - [x] 1RE.2. Paginated-text interior renderer
@@ -75,7 +76,7 @@ _None._
 
 <a name="m2-todo"><h4>To Do (Milestone 2)</h4></a>
 
-- [ ] 2FI.5. Tune density logic against a populated shard set — **depends on 1DA.3**
+_None._
 
 <a name="m2-blocked"><h4>Blocked (Milestone 2)</h4></a>
 
@@ -88,6 +89,7 @@ _None._
 - [x] 2FI.3. Broken-mirror shard shape generator
 - [x] 2FI.4. Day-cycle sky background (local-time driven)
 - [x] 2FI.6. Non-deterministic replacement when a shard drifts off-screen (0/1/many at varied depths)
+- [x] 2FI.5. Tune density logic against a populated shard set — pool-aware density target `[2, min(12, pool.length)]`, depth spread keyed to `DEPTH_FULL_SPREAD=5`, replacement fix (departed shard re-eligible on pool exhaustion)
 - [x] 2FI.7. Drift performance profiled at up to 30 shards on 60Hz devices — no jank in either mode; drift switched to GPU `transform` motion (`contain: layout style`, `will-change: transform`) as the cheaper default (dev harness at `/dev/perf`; see [DRIFT-PERF.md](../DRIFT-PERF.md))
 - [x] 2FI.8. Sky-cycle timezone verification (automated tests covering all 24 hours + boundary conditions)
 - [x] 2IN.1. Pointer input module
@@ -219,7 +221,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 
 1DA.1["`*1DA.1*<br/>**Data**<br/>shards schema`"]:::done
 1DA.2["`*1DA.2*<br/>**Data**<br/>storage RLS`"]:::done
-1DA.3["`*1DA.3*<br/>**Data**<br/>seed shards`"]:::open
+1DA.3["`*1DA.3*<br/>**Data**<br/>seed shards`"]:::done
 1DA.4["`*1DA.4*<br/>**Data**<br/>upload workflow notes`"]:::done
 1RE.1["`*1RE.1*<br/>**Rend**<br/>still-image surface`"]:::done
 1RE.2["`*1RE.2*<br/>**Rend**<br/>paginated-text interior`"]:::done
@@ -232,7 +234,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 2FI.2["`*2FI.2*<br/>**Field**<br/>density logic`"]:::done
 2FI.3["`*2FI.3*<br/>**Field**<br/>shard shape`"]:::done
 2FI.4["`*2FI.4*<br/>**Field**<br/>sky cycle`"]:::done
-2FI.5["`*2FI.5*<br/>**Field**<br/>tune density`"]
+2FI.5["`*2FI.5*<br/>**Field**<br/>tune density`"]:::done
 2FI.6["`*2FI.6*<br/>**Field**<br/>non-det replacement`"]:::done
 2FI.7["`*2FI.7*<br/>**Field**<br/>drift perf profile`"]:::done
 2FI.8["`*2FI.8*<br/>**Field**<br/>tz sky verify`"]:::done
