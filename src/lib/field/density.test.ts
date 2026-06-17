@@ -16,6 +16,7 @@ function makeShard(id: string): Shard {
 }
 
 const shards = Array.from({ length: 20 }, (_, i) => makeShard(`shard-${i}`));
+const smallPool = Array.from({ length: 6 }, (_, i) => makeShard(`small-${i}`));
 
 describe('buildField', () => {
 	it('returns empty array when given no shards', () => {
@@ -28,11 +29,20 @@ describe('buildField', () => {
 		expect(field.length).toBeLessThanOrEqual(small.length);
 	});
 
-	it('produces between 3 and 12 shards for a large pool', () => {
+	it('produces between MIN_SHARDS (2) and pool.length for a 6-shard pool', () => {
+		// Run several times to account for randomness
+		for (let i = 0; i < 20; i++) {
+			const field = buildField(smallPool);
+			expect(field.length).toBeGreaterThanOrEqual(2);
+			expect(field.length).toBeLessThanOrEqual(smallPool.length);
+		}
+	});
+
+	it('produces between 2 and 12 shards for a large pool', () => {
 		// Run several times to account for randomness
 		for (let i = 0; i < 10; i++) {
 			const field = buildField(shards);
-			expect(field.length).toBeGreaterThanOrEqual(3);
+			expect(field.length).toBeGreaterThanOrEqual(2);
 			expect(field.length).toBeLessThanOrEqual(12);
 		}
 	});
@@ -59,6 +69,25 @@ describe('buildField', () => {
 			expect(fs.depth).toBeGreaterThanOrEqual(0.3);
 			expect(fs.depth).toBeLessThanOrEqual(1.0);
 		}
+	});
+
+	it('spreads depth across a meaningful range when field is populated (>=DEPTH_FULL_SPREAD)', () => {
+		// With 6+ shards on-screen the full [0.3, 1.0] depth range should open up.
+		// Across many builds we expect to see both near and far shards.
+		const minDepths: number[] = [];
+		const maxDepths: number[] = [];
+		for (let i = 0; i < 30; i++) {
+			const field = buildField(shards);
+			// Only check builds where the density target was high enough
+			if (field.length >= 5) {
+				minDepths.push(Math.min(...field.map(fs => fs.depth)));
+				maxDepths.push(Math.max(...field.map(fs => fs.depth)));
+			}
+		}
+		// The closest shards should be well below 0.55 (the solo mid-band floor)
+		expect(Math.min(...minDepths)).toBeLessThan(0.5);
+		// The furthest shards should be well above 0.65 (the solo mid-band ceiling)
+		expect(Math.max(...maxDepths)).toBeGreaterThan(0.8);
 	});
 
 	it('does not show the same shard twice', () => {
@@ -94,6 +123,32 @@ describe('spawnShard', () => {
 		for (let i = 0; i < 20; i++) {
 			const spawned = spawnShard([first, shards[1]!], 'left', exclude);
 			expect(spawned?.shard.id).not.toBe(first.id);
+		}
+	});
+
+	it('returns the departing shard when it is the only non-visible candidate (pool exhausted)', () => {
+		// Simulate the B3 scenario: a 3-shard pool where 3 are on-screen, one departs.
+		// The departing shard's id is removed from excludeIds before calling spawnShard
+		// (this is what drift.ts offScreen() now does).
+		const pool = [makeShard('a'), makeShard('b'), makeShard('c')];
+		const departing = pool[0]!;
+		// All three were on-screen; the departing one has just left, so it's removed
+		const excludeIds = new Set([pool[1]!.id, pool[2]!.id]); // departing NOT in exclude
+		const spawned = spawnShard(pool, 'left', excludeIds);
+		// The only non-excluded shard is the departing one — it must be returned
+		expect(spawned).not.toBeNull();
+		expect(spawned!.shard.id).toBe(departing.id);
+	});
+
+	it('never returns a shard that is still on-screen (uniqueness invariant)', () => {
+		// Even in the small-pool fallback, the visible set must not produce a duplicate.
+		const pool = [makeShard('x'), makeShard('y'), makeShard('z')];
+		const visibleIds = new Set([pool[1]!.id, pool[2]!.id]); // x departed, y+z still visible
+		for (let i = 0; i < 20; i++) {
+			const spawned = spawnShard(pool, 'right', visibleIds);
+			if (spawned) {
+				expect(visibleIds.has(spawned.shard.id)).toBe(false);
+			}
 		}
 	});
 });

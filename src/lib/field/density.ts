@@ -2,7 +2,7 @@ import type { Shard, FieldShard } from '$lib/types.js';
 import { nanoid } from '$lib/nanoid.js';
 import { generateClipPath } from './shape.js';
 
-const MIN_SHARDS = 3;
+const MIN_SHARDS = 2;
 const MAX_SHARDS = 12;
 
 // Full depth range across the field
@@ -11,12 +11,17 @@ const DEPTH_MAX = 1.0;
 // When only one shard is visible, constrain it to this mid-range band
 const DEPTH_SOLO_MIN = 0.55;
 const DEPTH_SOLO_MAX = 0.65;
+// Field size at which the full [DEPTH_MIN, DEPTH_MAX] range opens up.
+// At this many shards on-screen, parallax is fully visible; below it the range
+// compresses toward the solo mid-band. Keyed to a realistic small pool (~6)
+// rather than MAX_SHARDS, so parallax is visible as soon as the field feels populated.
+const DEPTH_FULL_SPREAD = 5;
 
 function randomDepth(fieldSize: number): number {
 	// Compress the depth range toward the mid-band when the field is sparse.
 	// At fieldSize=1 the shard sits near the middle plane.
-	// At fieldSize=MAX_SHARDS the full range is available.
-	const t = Math.min(1, (fieldSize - 1) / (MAX_SHARDS - 1));
+	// At fieldSize>=DEPTH_FULL_SPREAD the full [DEPTH_MIN, DEPTH_MAX] range is open.
+	const t = Math.min(1, (fieldSize - 1) / (DEPTH_FULL_SPREAD - 1));
 	const lo = DEPTH_SOLO_MIN + t * (DEPTH_MIN - DEPTH_SOLO_MIN);
 	const hi = DEPTH_SOLO_MAX + t * (DEPTH_MAX - DEPTH_SOLO_MAX);
 	return lo + Math.random() * (hi - lo);
@@ -52,8 +57,12 @@ function pickShard(shards: Shard[]): Shard {
 export function buildField(shards: Shard[]): FieldShard[] {
 	if (shards.length === 0) return [];
 
-	// Never show a shard more than once — cap density at pool size
-	const densityTarget = MIN_SHARDS + Math.floor(Math.random() * (MAX_SHARDS - MIN_SHARDS + 1));
+	// Scale the on-screen target to the pool: the effective ceiling is the smaller of
+	// MAX_SHARDS (the absolute cap) and the pool size (can't show the same shard twice).
+	// This means a 6-shard pool can show 2–6 on-screen (instead of always 6), so
+	// density varies naturally even when the pool is small.
+	const effectiveMax = Math.min(MAX_SHARDS, shards.length);
+	const densityTarget = MIN_SHARDS + Math.floor(Math.random() * (effectiveMax - MIN_SHARDS + 1));
 	const count = Math.min(densityTarget, shards.length);
 
 	// Shuffle a copy of the pool so selection is unique without replacement

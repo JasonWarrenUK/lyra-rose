@@ -85,8 +85,14 @@ export function drift(
 		const count = replacementCount();
 		const replacements: FieldShard[] = [];
 		const edges: Array<'left' | 'right' | 'top' | 'bottom'> = ['left', 'right', 'top', 'bottom'];
-		// Track which shard IDs are being added in this batch to avoid duplicating within the batch
+		// Seed the exclusion set from the currently-visible shards, but remove the
+		// departing shard's id first — it has just left the screen and is now eligible
+		// to re-enter. This allows the field to stay alive when the pool is small
+		// (pool == on-screen count): the only available candidate is the just-departed
+		// shard, which satisfies "no longer on-screen". Two of the same shard are never
+		// simultaneously visible because usedIds still excludes all remaining visible ones.
 		const usedIds = new Set(state.excludeIds ?? []);
+		usedIds.delete(state.fieldShard.shard.id);
 
 		for (let i = 0; i < count; i++) {
 			const edge = edges[Math.floor(Math.random() * edges.length)]!;
