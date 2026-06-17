@@ -16,16 +16,20 @@ RLS policies are already applied. Assets served at:
 ## Image naming convention
 
 ```
-{shard-id-or-slug}/{descriptor}.{ext}
+{category}-{name}.{ext}
 
 # Examples:
-redwall-cover/cover.jpg
-redwall-cover/thumbnail.jpg
-harbour-morning/photo.jpg
+book-redwall.jpg
+animal-orangutan.jpg
+location-stonehenge.jpg
+animal-bird-owl-barn.jpg
+game-board-diy.jpg
+location-newForest.jpg
 ```
 
-- Lowercase, hyphens, no spaces
-- Meaningful slug, not a UUID
+- Flat at the bucket root (no sub-folders)
+- `{category}` is a broad type: `book`, `animal`, `location`, `game`, `art`, etc.
+- `{name}` is a brief descriptor — lowercase, hyphens, no spaces
 - Alt text is stored in the shard row, not in the filename
 
 ## Adding a shard (full workflow)
