@@ -11,10 +11,16 @@
 	let { data, opened = false }: Props = $props();
 
 	const storageBase = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/shards/`;
+
+	// Absolute paths (http(s):, data:, or root-relative /) are used as-is; bare
+	// keys are resolved against Supabase Storage. Lets local/placeholder assets work.
+	const src = $derived(
+		/^(https?:|data:|\/)/.test(data.image_path) ? data.image_path : storageBase + data.image_path
+	);
 </script>
 
 <img
-	src={storageBase + data.image_path}
+	{src}
 	alt={data.alt}
 	class:opened
 	draggable="false"

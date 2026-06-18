@@ -2,6 +2,13 @@ import { gsap } from 'gsap';
 import type { FieldShard, Shard } from '$lib/types.js';
 import { replacementCount, spawnShard } from './density.js';
 
+/** How a shard's drift position is written to the DOM each frame. */
+export type PositionMode =
+	/** GPU-composited transform: translate3d — no per-frame layout (production default). */
+	| 'transform'
+	/** Legacy left/top offsets — triggers layout + paint each frame (kept for A/B profiling). */
+	| 'offset';
+
 /**
  * Svelte action: drives GSAP-ticked drift for a single shard element.
  * Wraps everything in gsap.context() so ctx.revert() cleans up completely.
@@ -17,6 +24,7 @@ export function drift(
 		paused?: boolean;
 		excludeIds?: Set<string>;
 		fieldSize?: number;
+		positionMode?: PositionMode;
 	}
 ): { update: (p: typeof params) => void; destroy: () => void } {
 	let state = { ...params };
@@ -27,8 +35,23 @@ export function drift(
 	const vxBase = params.fieldShard.vx;
 	const vyBase = params.fieldShard.vy;
 
+	// Write the current (x, y) — held in vw/vh — to the element. In 'transform'
+	// mode we convert to px and use a composited translate3d (no layout); in
+	// 'offset' mode we set left/top directly (the legacy, layout-bound path).
+	function applyPosition() {
+		if ((state.positionMode ?? 'transform') === 'transform') {
+			gsap.set(node, {
+				x: (x / 100) * window.innerWidth,
+				y: (y / 100) * window.innerHeight,
+				force3D: true,
+			});
+		} else {
+			gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+		}
+	}
+
 	// Set initial position immediately so element doesn't flash at 0,0
-	gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+	applyPosition();
 
 	let lastTime = gsap.ticker.time;
 
@@ -44,11 +67,10 @@ export function drift(
 
 		if (state.paused || dt > 0.5) return; // skip large gaps (tab hidden, etc.)
 
-		const speedFactor = 1; // slowdown is handled by CSS scale, not velocity
-		x += vxBase * speedFactor * dt;
-		y += vyBase * speedFactor * dt;
+		x += vxBase * dt;
+		y += vyBase * dt;
 
-		gsap.set(node, { left: `${x}vw`, top: `${y}vh` });
+		applyPosition();
 
 		// Off-screen: >15 units outside viewport boundary
 		if (x < -15 || x > 115 || y < -15 || y > 115) {
@@ -63,8 +85,14 @@ export function drift(
 		const count = replacementCount();
 		const replacements: FieldShard[] = [];
 		const edges: Array<'left' | 'right' | 'top' | 'bottom'> = ['left', 'right', 'top', 'bottom'];
-		// Track which shard IDs are being added in this batch to avoid duplicating within the batch
+		// Seed the exclusion set from the currently-visible shards, but remove the
+		// departing shard's id first — it has just left the screen and is now eligible
+		// to re-enter. This allows the field to stay alive when the pool is small
+		// (pool == on-screen count): the only available candidate is the just-departed
+		// shard, which satisfies "no longer on-screen". Two of the same shard are never
+		// simultaneously visible because usedIds still excludes all remaining visible ones.
 		const usedIds = new Set(state.excludeIds ?? []);
+		usedIds.delete(state.fieldShard.shard.id);
 
 		for (let i = 0; i < count; i++) {
 			const edge = edges[Math.floor(Math.random() * edges.length)]!;
