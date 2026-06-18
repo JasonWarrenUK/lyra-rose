@@ -15,6 +15,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@types/bun": "latest",
 		"@vitest/ui": "^4.1.6",
+		"happy-dom": "^20.10.6",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.6"
 	},
