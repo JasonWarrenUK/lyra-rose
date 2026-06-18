@@ -123,7 +123,8 @@ export function spawnShard(
 }
 
 export function replacementCount(): number {
-	// Non-deterministic replacement: 0, 1, or 2 with weighted probability
+	// Non-deterministic replacement count, weighted 25% / 60% / 15% for 0 / 1 / 2.
+	// Most departures pull in exactly one shard; occasionally none or two.
 	const r = Math.random();
 	if (r < 0.25) return 0;
 	if (r < 0.85) return 1;
