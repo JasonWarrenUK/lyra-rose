@@ -256,7 +256,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 3TO.2["`*3TO.2*<br/>**Touch**<br/>audio-summons analogue`"]:::open
 3TO.3["`*3TO.3*<br/>**Touch**<br/>field touch grammar`"]
 3TO.4["`*3TO.4*<br/>**Touch**<br/>opening touch grammar`"]
-3AU.1["`*3AU.1*<br/>**Audio**<br/>pointer summons e2e`"]
+3AU.1["`*3AU.1*<br/>**Audio**<br/>pointer summons e2e`"]:::open
 3AU.2["`*3AU.2*<br/>**Audio**<br/>touch summons equiv`"]
 3AU.3["`*3AU.3*<br/>**Audio**<br/>expand/collapse fx`"]:::done
 3AU.4["`*3AU.4*<br/>**Audio**<br/>proximity primitives`"]:::done
@@ -269,8 +269,8 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 4PO.6["`*4PO.6*<br/>**Polish**<br/>final favicon decision`"]:::open
 4PO.7["`*4PO.7*<br/>**Polish**<br/>URL decision`"]:::open
 4PO.8["`*4PO.8*<br/>**Polish**<br/>icon set`"]
-4PO.9["`*4PO.9*<br/>**Polish**<br/>perf audit`"]
-4PO.10["`*4PO.10*<br/>**Polish**<br/>a11y audit`"]
+4PO.9["`*4PO.9*<br/>**Polish**<br/>perf audit`"]:::open
+4PO.10["`*4PO.10*<br/>**Polish**<br/>a11y audit`"]:::open
 4PO.11["`*4PO.11*<br/>**Polish**<br/>reduced-motion`"]:::done
 4PO.12["`*4PO.12*<br/>**Polish**<br/>prod deploy + DNS`"]
 4PO.13["`*4PO.13*<br/>**Polish**<br/>indexability check`"]
