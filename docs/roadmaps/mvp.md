@@ -13,7 +13,7 @@ description: MVP roadmap for The World I'd Build You — a wordless drifting fie
 | **Input** | Pointer hover pause + touch-attention         | Touch grammar design                 | Touch grammar decisions          |
 | **Audio** | Proximity gain + expand/collapse sounds       | Touch audio-summons equivalent       | Touch grammar decisions          |
 | **Polish**| Meta description, favicon, OG card, a11y      | OG editorial + final favicon         | —                                |
-| **Capt**  | Deferred (post-MVP)                           | Catch endpoint design                | MVP must ship first              |
+| **Capt**  | Phase A (Tend UI) active; pipeline deferred   | Tend auth-model decision (5RE.11)    | Full catch pipeline still behind MVP ship |
 
 ---
 
@@ -174,7 +174,7 @@ _None._
 <a name="m5"><h3>Milestone 5: Capture Pipeline (post-MVP)</h3></a>
 
 > [!IMPORTANT]
-> **Goal:** Frictionless capture into the collection from any client. Browser extension is one client; the catch endpoint accepts input from a phone shortcut, PWA, or anything else. Tending becomes optional enrichment, never a gate.
+> **Goal:** Two phases. Phase A (now): a private Tend UI that replaces the manual Supabase Studio JSON-entry stopgap — a form to author, list, edit, and delete shards without hand-typing raw JSON. Phase B (after MVP ships): frictionless capture from any client — browser extension, phone shortcut, PWA. The catch endpoint accepts input from any of them; tending remains optional enrichment, never a gate.
 
 <a name="m5-doing"><h4>In Progress (Milestone 5)</h4></a>
 
@@ -182,16 +182,30 @@ _None._
 
 <a name="m5-todo"><h4>To Do (Milestone 5)</h4></a>
 
-- [ ] 5DA.5. Catch endpoint API design (auth, payload shape, idempotency) — **depends on 4PO.14**
+> [!NOTE]
+> **Phase A — Tend authoring UI (actionable now):** replaces the manual Studio JSON-entry stopgap. No dependency on MVP shipping.
+
+- [ ] 5RE.11. Auth-model decision for the private Tend route: choose a login mechanism (shared passphrase / Supabase Auth / signed cookie / IP-allowlist) compatible with the serverless no-session constraint (`persistSession:false`, no auto-refresh ticker per PR #4). Gates all Tend write-path work.
+- [ ] 5DA.13. Zod schema + typed insert for shards at the write boundary: validate `surface_data {image_path, alt}`, `interior_data {pages[]}|null`, `audio_path`, `tending_notes` before insert; replace the unchecked `as Shard[]` cast pattern with parsed types — **depends on 5RE.11**
+- [ ] 5DA.14. Image upload to the `shards` bucket from the Tend route (authenticated write): server action uploads the file, enforces the `{category}-{name}.{ext}` flat-bucket naming, returns the storage key for the form — **depends on 5RE.11, 5DA.13**
+- [ ] 5RE.12. Create-shard form in the private Tend route: surface image + alt, optional paginated-text interior editor (one screenful per page), tending notes; writes a validated row via 5DA.13. Replaces the manual Studio JSON insert — **depends on 5RE.11, 5DA.13, 5DA.14**
+- [ ] 5RE.13. List-existing-shards view in Tend: read all rows (surface thumb, alt, interior/audio presence, tending notes) as the authoring index — **depends on 5RE.11, 5DA.13**
+- [ ] 5RE.14. Edit-existing-shard in Tend: load a row from the list into the create-shard form, update surface/interior/notes, optionally replace the image, write a validated update — **depends on 5RE.12, 5RE.13**
+- [ ] 5RE.10. Considered-deletion flow inside Tend (built on the Phase-A list/edit view) — **depends on 5RE.14**
+- [ ] 5DA.15. Supersede `docs/SEEDING.md`: once the Tend UI lands, retire the manual Studio workflow — rewrite the doc (or replace with a Tend usage note) so the UI is the canonical authoring path; keep only the naming/alt-text/screenful discipline the UI does not enforce — **depends on 5RE.12**
+
+> [!NOTE]
+> **Phase B — Full capture pipeline (behind MVP ship):** automated capture from any client. Gated on 4PO.14.
+
 - [ ] 5DA.6. OpenGraph metadata fetch service (server-side preview archival)
+- [ ] 5DA.5. Catch endpoint API design (auth, payload shape, idempotency) — **depends on 4PO.14**
 - [ ] 5DA.7. Asset archival into Supabase Storage at capture time — **depends on 5DA.6**
 - [ ] 5DA.8. Catch endpoint implementation — **depends on 5DA.5, 5DA.7**
+- [ ] 5RE.9. Wire catch-endpoint capture into the existing Tend UI (auto-populate the create-shard form from OG fetch + archived asset; review-before-save) — **depends on 5DA.8, 5RE.12**
 - [ ] 5DA.9. Browser extension MVP (one-click send: link / image / quote) — **depends on 5DA.8**
 - [ ] 5DA.10. Immediate-regret undo on most recent capture (extension-side) — **depends on 5DA.9**
 - [ ] 5DA.11. Phone shortcut client (iOS Shortcuts) — **depends on 5DA.8**
 - [ ] 5DA.12. Co-contributor access path for Harriet's device — **depends on 5DA.8**
-- [ ] 5RE.9. Custom Tend UI (private, replaces Supabase Studio stopgap) — **depends on 5DA.8**
-- [ ] 5RE.10. Considered-deletion flow inside Tend UI — **depends on 5RE.9**
 
 <a name="m5-blocked"><h4>Blocked (Milestone 5)</h4></a>
 
@@ -276,6 +290,13 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 4PO.13["`*4PO.13*<br/>**Polish**<br/>indexability check`"]
 4PO.14["`*4PO.14*<br/>**Polish**<br/>MVP success test`"]
 
+5RE.11["`*5RE.11*<br/>**Capt**<br/>tend auth-model decision`"]:::open
+5DA.13["`*5DA.13*<br/>**Capt**<br/>zod insert schema`"]
+5DA.14["`*5DA.14*<br/>**Capt**<br/>image upload to bucket`"]
+5RE.12["`*5RE.12*<br/>**Capt**<br/>create-shard form`"]
+5RE.13["`*5RE.13*<br/>**Capt**<br/>list shards view`"]
+5RE.14["`*5RE.14*<br/>**Capt**<br/>edit shard`"]
+5DA.15["`*5DA.15*<br/>**Capt**<br/>supersede SEEDING.md`"]
 5DA.5["`*5DA.5*<br/>**Capt**<br/>catch endpoint design`"]
 5DA.6["`*5DA.6*<br/>**Capt**<br/>OG fetch service`"]:::open
 5DA.7["`*5DA.7*<br/>**Capt**<br/>asset archival`"]
@@ -284,7 +305,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 5DA.10["`*5DA.10*<br/>**Capt**<br/>regret undo`"]
 5DA.11["`*5DA.11*<br/>**Capt**<br/>phone shortcut`"]
 5DA.12["`*5DA.12*<br/>**Capt**<br/>Harriet co-contrib`"]
-5RE.9["`*5RE.9*<br/>**Capt**<br/>custom Tend UI`"]
+5RE.9["`*5RE.9*<br/>**Capt**<br/>catch→Tend wiring`"]
 5RE.10["`*5RE.10*<br/>**Capt**<br/>considered deletion`"]
 
 %% Milestone grouping
@@ -308,6 +329,9 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 4PO.9 --> m4
 4PO.12 --> m4
 4PO.14 --> m4
+5RE.11 --> m5
+5DA.13 --> m5
+5RE.12 --> m5
 5DA.8 --> m5
 5DA.9 --> m5
 5RE.9 --> m5
@@ -344,6 +368,18 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 3OP.8 --> 4PO.14
 3TO.4 --> 4PO.14
 
+5RE.11 --> 5DA.13
+5RE.11 --> 5DA.14
+5DA.13 --> 5DA.14
+5RE.11 --> 5RE.12
+5DA.13 --> 5RE.12
+5DA.14 --> 5RE.12
+5RE.11 --> 5RE.13
+5DA.13 --> 5RE.13
+5RE.12 --> 5RE.14
+5RE.13 --> 5RE.14
+5RE.12 --> 5DA.15
+5RE.14 --> 5RE.10
 4PO.14 --> 5DA.5
 5DA.6 --> 5DA.7
 5DA.5 --> 5DA.8
@@ -353,7 +389,7 @@ m5{"`**Milestone 5**<br/>Capture Pipeline`"}:::mile
 5DA.8 --> 5DA.11
 5DA.8 --> 5DA.12
 5DA.8 --> 5RE.9
-5RE.9 --> 5RE.10
+5RE.12 --> 5RE.9
 
 classDef default fill:#fff7fb;
 classDef open fill:#fff9e5;
